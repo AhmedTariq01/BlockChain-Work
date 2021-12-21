@@ -47,4 +47,8 @@ myBitcoin =new Blockchain();
 myBitcoin.addBlock(new Block(1,"09/02/2021",{amount:4000}));
 myBitcoin.addBlock(new Block(2,"09/02/2021",{amount:100000}));
 console.log(JSON.stringify(myBitcoin,null,4));
-
+console.log("Is Blockchain is Valid ?"+myBitcoin.isChainValid());
+// Attack on first block data
+myBitcoin.chain[1].data={amount:200};
+//console.log(JSON.stringify(myBitcoin,null,4));
+console.log("Is Blockchain is Valid ?"+myBitcoin.isChainValid());
