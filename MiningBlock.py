@@ -70,7 +70,6 @@ class Blockchain:
             block = Block(self.index, date.today(), sletedTransaction, self.getLatestBlock().hash)
             result=block.mineBlock(self.difficulty)
             
-            
 
 
         print('block successfully added')
