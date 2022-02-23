@@ -1,5 +1,6 @@
 import datetime
 import hashlib
+import json
 
 class Block:
     def __init__(self,index,timeStamp,data,hash,previousHash):
@@ -38,3 +39,6 @@ class Block:
                 new_proof += 1
         return new_proof
     
+    def hash(self, block):
+        encoded_block = json.dumps(block, sort_keys = True).encode()
+        return hashlib.sha256(encoded_block).hexdigest()
