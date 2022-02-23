@@ -4,15 +4,9 @@ import json
 from uuid import uuid4
 from urllib.parse import urlparse
 from flask import Flask, jsonify, request
-import requests
 
-class Block:
-    def __init__(self,index,timeStamp,data,hash,previousHash):
-        self.timeStamp=timeStamp
-        self.data=data
-        self.previousHash=previousHash
-        self.hash=hash
-
+class Blockchain:
+    
     def __init__(self):
         self.chain = []
         self.transactions = []
@@ -89,22 +83,28 @@ class Block:
                 return True
         return False
     
-    app = Flask(__name__)
-    @app.route('/mine_block', methods = ['GET'])
-    def mine_block():
-        previous_block = blockchain.get_previous_block() #return last or tail block
-        previous_proof = previous_block['proof'] # here tail block nonce will be stored in Previous_proof variable
-        proof = blockchain.proof_of_work(previous_proof) #call of POW will return golden nonce
-        previous_hash = blockchain.hash(previous_block) # calculate hash of last block and store in previous_hash of new block
-        blockchain.add_transaction(sender = node_address, receiver = 'Hadelin', amount = 1)
-        block = blockchain.create_block(proof, previous_hash) #add block in chain
-        response = {'message': 'Congratulations, you just mined a block!',
-                    'index': block['index'],
-                    'timestamp': block['timestamp'],
-                    'proof': block['proof'],
-                    'previous_hash': block['previous_hash'],
-                    'transactions': block['transactions']}
-        return jsonify(response), 200
+app = Flask(__name__)
+
+# Creating an address for the node on Port 5001
+node_address = str(uuid4()).replace('-', '')
+
+# Creating a Blockchain
+blockchain = Blockchain()
+@app.route('/mine_block', methods = ['GET'])
+def mine_block():
+    previous_block = blockchain.get_previous_block() #return last or tail block
+    previous_proof = previous_block['proof'] # here tail block nonce will be stored in Previous_proof variable
+    proof = blockchain.proof_of_work(previous_proof) #call of POW will return golden nonce
+    previous_hash = blockchain.hash(previous_block) # calculate hash of last block and store in previous_hash of new block
+    blockchain.add_transaction(sender = node_address, receiver = 'Hadelin', amount = 1)
+    block = blockchain.create_block(proof, previous_hash) #add block in chain
+    response = {'message': 'Congratulations, you just mined a block!',
+                'index': block['index'],
+                'timestamp': block['timestamp'],
+                'proof': block['proof'],
+                'previous_hash': block['previous_hash'],
+                'transactions': block['transactions']}
+    return jsonify(response), 200
 
 @app.route('/get_chain', methods = ['GET'])
 def get_chain():
@@ -144,17 +144,6 @@ def connect_node():
     response = {'message': 'All the nodes are now connected. The Hadcoin Blockchain now contains the following nodes:',
                 'total_nodes': list(blockchain.nodes)}
     return jsonify(response), 201
-
-# Replacing the chain by the longest chain if needed
-@app.route('/replace_chain', methods = ['GET'])
-def replace_chain():
-    is_chain_replaced = blockchain.replace_chain()
-    if is_chain_replaced:
-        response = {'message': 'The nodes had different chains so the chain was replaced by the longest one.',
-                    'new_chain': blockchain.chain}
-    else:
-        response = {'message': 'All good. The chain is the largest one.','actual_chain': blockchain.chain}
-    return jsonify(response), 200
 
 # Replacing the chain by the longest chain if needed
 @app.route('/replace_chain', methods = ['GET'])
