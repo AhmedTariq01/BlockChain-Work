@@ -9,17 +9,7 @@
 
 ## What's included?
 
-* Blueprints
-* User and permissions management
-* Flask-SQLAlchemy for databases
-* Flask-WTF for forms
-* Flask-Assets for asset management and SCSS compilation
-* Flask-Mail for sending emails
-* gzip compression
-* Redis Queue for handling asynchronous tasks
-* ZXCVBN password strength checker
-* CKEditor for editing pages
-
+* 
 
 ## Setting up
 
